@@ -9,6 +9,8 @@ WIDTH = 600
 HEIGHT = 600
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
 SIZE = (WIDTH, HEIGHT)
 CIRCLE = pygame.image.load('circle.png')
 CROSS = pygame.image.load('x.png')
@@ -20,7 +22,7 @@ def mark(row, col, player):
 def is_valid_mark(row, col):
 	return board[row][col] == 0
 
-def if_board_full(row, col):
+def if_board_full():
 	for c in range(COLUMNS):
 		for r in range(ROWS):
 			if board[c][r] == 0:
@@ -45,22 +47,22 @@ def draw_lines():
 
 def is_winning_move(player):
 	if player == 1:
-		announcement = 'Player 1 Won'
+		announcement = BLUE
 	else:
-		announcement = 'Player 2 Won'
+		announcement = RED
 	for r in range(ROWS):
 		if board[r][0] == player and board[r][1] == player and board[r][2] == player:
-			print(announcement)
+			pygame.draw.line(window, announcement, (10, (r*200) + 100), (WIDTH - 10, (r*200) + 100), 10)
 			return True
 	for c in range(COLUMNS):
 		if board[0][c] == player and board[1][c] == player and board[2][c] == player:
-			print(announcement)
+			pygame.draw.line(window, announcement, ((c*200) + 100), 10, ((r*200) + 100, HEIGHT - 10), 10)
 			return True
 	if board[0][0] == player and board[1][1] == player and board[2][2] == player:
-			print(announcement)
+			pygame.draw.line(window, announcement, (10, 10), (590, 590), 10)
 			return True
 	if board[0][2] == player and board[1][1] == player and board[2][0] == player:
-			print(announcement)
+			pygame.draw.line(window, announcement, (590, 10), (10, 590))
 			return True
 
 board = np.zeros((ROWS, COLUMNS))
@@ -108,6 +110,15 @@ while not game_over:
 			Turn += 1
 			print(board)
 			draw_board()
+		if if_board_full():
+			game_over = True
 
-if game_over == True:
-	print('Game over!')
+		if game_over == True:
+			print('Game over!')
+			pygame.time.wait(2000)
+			board.fill(0)
+			window.fill(WHITE)
+			draw_lines()
+			draw_board()
+			game_over = False
+			pygame.display.update()
